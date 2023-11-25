@@ -1,0 +1,122 @@
+﻿@model IEnumerable<Actor>
+@{
+    ViewData["Title"] = "Actor";
+}
+
+
+<div class="container">
+    <div class="row">
+        @Html.Partial("Helper/_Alert")
+    </div>
+    <div class="row">
+        @Html.Partial("Helper/_Confirm")
+    </div>
+</div>
+<div id="actor_Area" class="row">
+    @foreach (Actor actor in Model)
+    {
+        <div class="col-4 " id="actor_detils">
+            <div class="card mb-3">
+                <h3 class="card-header">Card header</h3>
+                <div class="card-body">
+                    <h5 class="card-title d-flex justify-content-center align-items-center">@actor.FullName</h5>
+                    <h6 class="card-subtitle text-muted d-flex justify-content-center align-items-center">..</h6>
+                </div>
+                <div class="d-flex justify-content-center align-items-center">
+                    <img class="rounded-circle" src="@actor.ProfilePictureURL" alt="@actor.FullName" style="max-width: 150px" />
+
+                </div>
+                <div class="card-body">
+                    <p class="card-text">@actor.Bio</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Cras justo odio</li>
+                    <li class="list-group-item">Dapibus ac facilisis in</li>
+                    <li class="list-group-item">Vestibulum at eros</li>
+                </ul>
+                <div class="card-body">
+                    <a asp-controller="Actor" asp-action="Detail" asp-route-id="@actor.Id" target="_blank" type="button" class="btn btn-secondary" fdprocessedid="wbb2o9">Details</a>
+                    <button id="actor_@actor.Id" onclick="ShowDeleteConfirmtion('@actor.Id','@actor.FullName')" type="button" class="btn btn-danger" fdprocessedid="wbb2o9">Delete</button>
+
+                </div>
+                <div class="card-footer text-muted">
+                    2 days ago
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts{
+    <script>
+        $("#Action_Confirm").on("click", function () {
+            let Id = parseInt($(this).prop('name'));
+            let url = '@Url.Action("Delete", "Actor")'+ '/' + Id;
+            $.ajax({
+                url:url,
+                method: "POST",
+                dataType: "json",
+                success: function (data) {
+                    $("#Confirm").hide();
+                    $("#alert_Success").removeClass('d-none');
+                    $("#actor_"+Id).closest("#actor_detils").addClass('d-none'); // Delete This Card After Success
+
+                    setTimeout(() => {
+                        $("#alert_Success").addClass('d-none');
+                    },2000);
+                }
+            });
+        });
+
+        $("#Close_Confirm").on("click", function () {
+            $("#Confirm").hide();
+        });
+        $(".btn-close").on("click", function () {
+            $("#alert_Success").hide();
+        });
+
+        const ShowDeleteConfirmtion = (actorId,actorName) => {
+            let Content = `Do You Want Delete Actor ${actorName}`;
+            $("#Confirm").show();
+            $(".modal-title").text("Delete Confirmation.");
+            $(".modal-body p").text(Content);
+            $("#Action_Confirm").attr("name", actorId);
+        }
+
+        @*const CreateNewItem = () => {
+            let actorArea = $("#actor_Area");
+            actorArea.append(
+                "<div class='col-4'> <div class='card mb-3'>" +
+                "<h3 class='card-header'>Card header</h3>" +
+                "<div class='card-body'>" +
+                    "<h5 class='card-title d-flex justify-content-center align-items-center'>@actor.FullName</h5>" +
+                    "<h6 class='card-subtitle text-muted d-flex justify-content-center align-items-center'>..</h6>" +
+                "</div>"
+                <div class="d-flex justify-content-center align-items-center">
+                    <img class="rounded-circle" src="@actor.ProfilePictureURL" alt="@actor.FullName" style="max-width: 150px" />
+
+                </div>
+                <div class="card-body">
+                    <p class="card-text">@actor.Bio</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Cras justo odio</li>
+                    <li class="list-group-item">Dapibus ac facilisis in</li>
+                    <li class="list-group-item">Vestibulum at eros</li>
+                </ul>
+                <div class="card-body">
+                    <a asp-controller="Actor" asp-action="Detail" asp-route-id="@actor.Id" target="_blank" type="button" class="btn btn-secondary" fdprocessedid="wbb2o9">Details</a>
+                    <button  onclick="ShowDeleteConfirmtion('@actor.Id','@actor.FullName')" type="button" class="btn btn-danger" fdprocessedid="wbb2o9">Delete</button>
+
+                </div>
+                <div class="card-footer text-muted">
+                    2 days ago
+                </div>
+            </div>
+                + "</div>");
+
+
+        }*@
+
+    </script>
+}
